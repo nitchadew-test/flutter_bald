@@ -20,16 +20,24 @@ class Home extends StatelessWidget {
 
 class MyStatelessWidget extends StatelessWidget {
   TextEditingController myController = new TextEditingController();
-  String webSmartAccessPath =
-      'https://onesmartaccess-vue.herokuapp.com/?onechat_token=';
+  String webSmartAccessPath = '';
 
-  cheackPermission() async {
-    var cameraStatus = await Permission.camera.status;
-
-    if (!cameraStatus.isGranted) {
-      await Permission.camera.request();
+  cheackPermission(Map permissionReq) async {
+    if (permissionReq['camera']) {
+      var cameraStatus = await Permission.camera.status;
+      print(cameraStatus);
+      if (!cameraStatus.isGranted) {
+        await Permission.camera.request();
+      }
     }
-    print(cameraStatus);
+
+    if (permissionReq['ble']) {
+      var bluetoothStatus = await Permission.bluetooth.status;
+      print(bluetoothStatus);
+      if (!bluetoothStatus.isGranted) {
+        await Permission.bluetooth.request();
+      }
+    }
   }
 
   ListTile _tile(String title, String subtitle, IconData icon) => ListTile(
@@ -46,17 +54,24 @@ class MyStatelessWidget extends StatelessWidget {
         ),
       );
 
-  Widget _buildList(String name, String des) => ListView(
+  Widget _buildList(String webName, String description) => ListView(
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          _tile('Name', name, Icons.web_asset),
-          _tile('Description', des, Icons.description_outlined),
+          _tile('Name', webName, Icons.web_asset),
+          _tile('Description', description, Icons.description_outlined),
           // _tile('E-mail', mail, Icons.mail),
         ],
       );
 
-  Widget _card(String cardPicture, String cardTitle, String address,
-          String phone, BuildContext context) =>
+  Widget _card(
+          String cardPicture,
+          String cardTitle,
+          String webName,
+          String webUrl,
+          String description,
+          bool tokenReq,
+          Map permissionReq,
+          BuildContext context) =>
       Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
@@ -97,34 +112,37 @@ class MyStatelessWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Container(
-                              child: _buildList(address, phone),
-                              height: MediaQuery.of(context).size.height * 0.16,
+                              child: _buildList(webName, description),
+                              height: MediaQuery.of(context).size.height * 0.17,
                             ),
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: TextField(
-                          controller: myController,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your Token'),
+                      if (tokenReq) ...[
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: TextField(
+                            controller: myController,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Enter Onechat Token'),
+                          ),
                         ),
-                      ),
+                      ],
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           OutlinedButton.icon(
-                            label: Text('Click Me',
+                            label: Text('Open Webview',
                                 style: TextStyle(
                                     color: Colors.black.withOpacity(0.6))),
                             icon: Icon(Icons.web),
                             onPressed: () {
+                              webSmartAccessPath = webUrl;
                               webSmartAccessPath =
                                   webSmartAccessPath + myController.text;
-                              // print(webSmartAccessPath);
-                              cheackPermission();
+                              print(webSmartAccessPath);
+                              cheackPermission(permissionReq);
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       InAppWebview(
@@ -136,6 +154,48 @@ class MyStatelessWidget extends StatelessWidget {
                       )
                     ],
                   ))));
+
+  Widget _buildcard(BuildContext context) => ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          Container(
+              padding: EdgeInsets.all(25),
+              width: MediaQuery.of(context).size.width * 1.0,
+              child: _card(
+                  'images/dog.png',
+                  'One Smart Access',
+                  'www.onesmartaccess-vue.herokuapp.com',
+                  'https://onesmartaccess-vue.herokuapp.com/?onechat_token=',
+                  'Web Application for booking a Meeting Room',
+                  true,
+                  {'camera': true, 'ble': false},
+                  context)),
+          Container(
+              padding: EdgeInsets.all(25),
+              width: MediaQuery.of(context).size.width * 1.0,
+              child: _card(
+                  'images/bald.jpg',
+                  'Google',
+                  'www.google.com',
+                  'https://google.com',
+                  'this just a google eiei',
+                  false,
+                  {'camera': false, 'ble': false},
+                  context)),
+          Container(
+              padding: EdgeInsets.all(25),
+              width: MediaQuery.of(context).size.width * 1.0,
+              child: _card(
+                  'images/bald.jpg',
+                  'Medbald',
+                  'https://afternoon-citadel-44754.herokuapp.com',
+                  'https://afternoon-citadel-44754.herokuapp.com/#/?onechat_token=',
+                  'Web Application for Unlocking Medical Box',
+                  true,
+                  {'camera': false, 'ble': true},
+                  context)),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -195,35 +255,8 @@ class MyStatelessWidget extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.90,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  if (index.isEven) {
-                    return Container(
-                        padding: EdgeInsets.all(25),
-                        width: MediaQuery.of(context).size.width * 1.0,
-                        child: _card(
-                            'images/dog.png',
-                            'Dog',
-                            'https://onesmartaccess-vue.herokuapp.com',
-                            'Web Application for booking a Meeting Room',
-                            context));
-                  } else {
-                    return Container(
-                        padding: EdgeInsets.all(25),
-                        width: MediaQuery.of(context).size.width * 1.0,
-                        child: _card(
-                            'images/bald.jpg',
-                            'Bald',
-                            '8/12 Long Roed, Los Angeles, California',
-                            '098765432',
-                            context));
-                  }
-                },
-              ),
-            ),
+                height: MediaQuery.of(context).size.height * 0.90,
+                child: _buildcard(context)),
           ],
         ),
       ),
