@@ -4,23 +4,85 @@ import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'webview.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({key}) : super(key: key);
 
-  static const String _title = 'Flutter Code Sample';
+  @override
+  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<Home> {
+  TextEditingController myController = new TextEditingController();
+  String webSmartAccessPath = '';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: _title,
-      home: MyStatelessWidget(),
+      title: 'Bald',
+      home: Scaffold(
+        backgroundColor: Colors.grey[50],
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Drawer Header'),
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent[400],
+                ),
+              ),
+              ListTile(
+                title: Text('Item 1'),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Item 2'),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          title: const Text('AppBar Demo'),
+          backgroundColor: Colors.greenAccent[400],
+          elevation: 5.00,
+          centerTitle: true,
+          actions: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        CupertinoPageRoute(builder: (context) {
+                      return QRViewExample();
+                    }));
+                  },
+                  child: Icon(Icons.navigate_next),
+                )),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                  height: MediaQuery.of(context).size.height * 0.90,
+                  child: _buildcard(context)),
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
-
-class MyStatelessWidget extends StatelessWidget {
-  TextEditingController myController = new TextEditingController();
-  String webSmartAccessPath = '';
 
   cheackPermission(Map permissionReq) async {
     if (permissionReq['camera']) {
@@ -196,70 +258,4 @@ class MyStatelessWidget extends StatelessWidget {
                   context)),
         ],
       );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-              decoration: BoxDecoration(
-                color: Colors.greenAccent[400],
-              ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      appBar: AppBar(
-        title: const Text('AppBar Demo'),
-        backgroundColor: Colors.greenAccent[400],
-        elevation: 5.00,
-        centerTitle: true,
-        actions: <Widget>[
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      CupertinoPageRoute(builder: (context) {
-                    return QRViewExample();
-                  }));
-                },
-                child: Icon(Icons.navigate_next),
-              )),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-                height: MediaQuery.of(context).size.height * 0.90,
-                child: _buildcard(context)),
-          ],
-        ),
-      ),
-    );
-  }
 }

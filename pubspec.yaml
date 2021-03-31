@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  flutter_launcher_icons: ^0.7.2
   flutter_inappwebview: ^4.0.0+4
   permission_handler: ^6.1.1
   webview_flutter: ^1.0.5
@@ -43,8 +44,12 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
-flutter:
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "images/bald.png"
 
+flutter:
   assets:
       - images/
 
