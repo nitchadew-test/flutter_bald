@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'webview.dart';
+import 'webviewWithData.dart';
 
 class Home extends StatefulWidget {
   Home({key}) : super(key: key);
@@ -14,6 +15,14 @@ class Home extends StatefulWidget {
 class _MyStatefulWidgetState extends State<Home> {
   TextEditingController myController = new TextEditingController();
   String webSmartAccessPath = '';
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () async {
+      setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +62,7 @@ class _MyStatefulWidgetState extends State<Home> {
           ),
         ),
         appBar: AppBar(
-          title: const Text('AppBar Demo'),
+          title: const Text('Bald Red Chat'),
           backgroundColor: Colors.greenAccent[400],
           elevation: 5.00,
           centerTitle: true,
@@ -87,6 +96,7 @@ class _MyStatefulWidgetState extends State<Home> {
   cheackPermission(Map permissionReq) async {
     if (permissionReq['camera']) {
       var cameraStatus = await Permission.camera.status;
+      print('cameraStatus');
       print(cameraStatus);
       if (!cameraStatus.isGranted) {
         await Permission.camera.request();
@@ -95,6 +105,7 @@ class _MyStatefulWidgetState extends State<Home> {
 
     if (permissionReq['ble']) {
       var bluetoothStatus = await Permission.bluetooth.status;
+      print('bluetoothStatus');
       print(bluetoothStatus);
       if (!bluetoothStatus.isGranted) {
         await Permission.bluetooth.request();
@@ -132,6 +143,7 @@ class _MyStatefulWidgetState extends State<Home> {
           String webUrl,
           String description,
           bool tokenReq,
+          bool webViewWithData,
           Map permissionReq,
           BuildContext context) =>
       Card(
@@ -191,29 +203,55 @@ class _MyStatefulWidgetState extends State<Home> {
                           ),
                         ),
                       ],
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          OutlinedButton.icon(
-                            label: Text('Open Webview',
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.6))),
-                            icon: Icon(Icons.web),
-                            onPressed: () {
-                              webSmartAccessPath = webUrl;
-                              webSmartAccessPath =
-                                  webSmartAccessPath + myController.text;
-                              print(webSmartAccessPath);
-                              cheackPermission(permissionReq);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      InAppWebview(
-                                        url: webSmartAccessPath,
-                                      )));
-                            },
-                          )
-                        ],
-                      )
+                      if (webViewWithData) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            OutlinedButton.icon(
+                              label: Text('Open Webview',
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6))),
+                              icon: Icon(Icons.web),
+                              onPressed: () {
+                                webSmartAccessPath = webUrl;
+                                webSmartAccessPath =
+                                    webSmartAccessPath + myController.text;
+                                print(webSmartAccessPath);
+                                cheackPermission(permissionReq);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        InAppWebviewWithData(
+                                            url: webSmartAccessPath,
+                                            webName: webName)));
+                              },
+                            )
+                          ],
+                        )
+                      ] else ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            OutlinedButton.icon(
+                              label: Text('Open Webview',
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6))),
+                              icon: Icon(Icons.web),
+                              onPressed: () {
+                                webSmartAccessPath = webUrl;
+                                webSmartAccessPath =
+                                    webSmartAccessPath + myController.text;
+                                print(webSmartAccessPath);
+                                cheackPermission(permissionReq);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        InAppWebview(
+                                            url: webSmartAccessPath,
+                                            webName: webName)));
+                              },
+                            )
+                          ],
+                        )
+                      ],
                     ],
                   ))));
 
@@ -230,6 +268,7 @@ class _MyStatefulWidgetState extends State<Home> {
                   'https://onesmartaccess-vue.herokuapp.com/?onechat_token=',
                   'Web Application for booking a Meeting Room',
                   true,
+                  false,
                   {'camera': true, 'ble': false},
                   context)),
           Container(
@@ -237,12 +276,13 @@ class _MyStatefulWidgetState extends State<Home> {
               width: MediaQuery.of(context).size.width * 1.0,
               child: _card(
                   'images/bald.jpg',
-                  'Google',
-                  'www.google.com',
-                  'https://google.com',
-                  'this just a google eiei',
+                  'test',
+                  'https://4e83f6d4756c.ngrok.io',
+                  'https://4e83f6d4756c.ngrok.io',
+                  'test webview to call flutter fuction',
                   false,
-                  {'camera': false, 'ble': false},
+                  true,
+                  {'camera': false, 'ble': true},
                   context)),
           Container(
               padding: EdgeInsets.all(25),
@@ -254,6 +294,7 @@ class _MyStatefulWidgetState extends State<Home> {
                   'https://afternoon-citadel-44754.herokuapp.com/#/?onechat_token=',
                   'Web Application for Unlocking Medical Box',
                   true,
+                  false,
                   {'camera': false, 'ble': true},
                   context)),
         ],

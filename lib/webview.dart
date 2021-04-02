@@ -2,23 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class InAppWebview extends StatefulWidget {
-  final String url;
+  final String _url;
+  final String _webName;
 
-  InAppWebview({
-    @required this.url,
-  });
+  InAppWebview({String url, String webName})
+      : _url = url,
+        _webName = webName;
+
+  // InAppWebview({
+  //   @required this.url,
+  // });
 
   @override
-  _InAppWebviewState createState() => new _InAppWebviewState(url);
+  _InAppWebviewState createState() => new _InAppWebviewState(_url, _webName);
 }
 
 class _InAppWebviewState extends State<InAppWebview> {
   InAppWebViewController webView;
   String url = "";
+  String webName = "";
   double progress = 0;
 
-  _InAppWebviewState(url) {
+  _InAppWebviewState(url, webName) {
     this.url = url;
+    this.webName = webName;
   }
 
   @override
@@ -35,7 +42,7 @@ class _InAppWebviewState extends State<InAppWebview> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('InAppWebView Example'),
+          title: Text(webName),
           centerTitle: true,
           elevation: 0,
         ),
@@ -44,11 +51,11 @@ class _InAppWebviewState extends State<InAppWebview> {
           Expanded(
             child: Container(
               child: InAppWebView(
-                  initialUrl: url,
+                  initialUrlRequest: URLRequest(url: Uri.parse(url)),
                   initialOptions: InAppWebViewGroupOptions(
                     crossPlatform: InAppWebViewOptions(
                       mediaPlaybackRequiresUserGesture: false,
-                      debuggingEnabled: true,
+                      // debuggingEnabled: true,
                     ),
                   ),
                   onWebViewCreated: (InAppWebViewController controller) {

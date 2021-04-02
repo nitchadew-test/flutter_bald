@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Flutter InAppBrowser</title>
+    </head>
+    <body>
+        <h1 id="p1">Hi</h1>
+        <br>
+        <button onclick="flash()">flash</button>
+        <button onclick="ble()">ble</button>
+
+
+        <script>
+            window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {
+                
+            });
+            function flash(){
+                    console.log('in flsah')
+                    window.flutter_inappwebview.callHandler('flashToggle', 12, 2, 50).then(function(result) {
+                        console.log(result);
+                        document.getElementById("p1").innerHTML = result;
+                    });
+                }
+            function ble(){
+                console.log('in flsah')
+                window.flutter_inappwebview.callHandler('scanBle').then(function(result) {
+                    console.log(typeof result);
+                    document.getElementById("p1").innerHTML = result;
+                });
+            }
+        </script>
+    </body>
+</html>
